@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    color: #00ffff;
+    font-family: 'Orbitron', 'Courier New', monospace;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+
+  #root {
+    height: 100vh;
+    width: 100vw;
+  }
+}
+
+@layer components {
+  .neon-border {
+    border: 1px solid currentColor;
+    box-shadow: 0 0 20px currentColor, inset 0 0 20px rgba(0, 255, 255, 0.1);
+  }
+  
+  .glass-panel {
+    background: rgba(0, 20, 40, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+  }
+  
+  .dev-mode-active {
+    border: 2px dashed #ff6b6b !important;
+    cursor: move;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 255, 0.5);
+  }
+}
+
+@layer utilities {
+  .text-neon-cyan {
+    color: #00ffff;
+  }
+  
+  .text-neon-blue {
+    color: #0080ff;
+  }
+  
+  .text-neon-green {
+    color: #00ff00;
+  }
+  
+  .bg-dark-bg {
+    background-color: #000000;
+  }
+  
+  .bg-neon-cyan {
+    background-color: #00ffff;
+  }
+  
+  .bg-neon-blue {
+    background-color: #0080ff;
+  }
+  
+  .bg-neon-green {
+    background-color: #00ff00;
+  }
+  
+  .border-neon-cyan {
+    border-color: #00ffff;
+  }
+  
+  .border-neon-blue {
+    border-color: #0080ff;
+  }
+  
+  .border-neon-green {
+    border-color: #00ff00;
+  }
+  
+  .shadow-neon {
+    box-shadow: 0 0 20px currentColor;
+  }
+  
+  .shadow-neon-strong {
+    box-shadow: 0 0 40px currentColor, inset 0 0 20px rgba(0, 255, 255, 0.1);
+  }
+}
+
+@keyframes glow {
+  0% { 
+    box-shadow: 0 0 20px currentColor; 
+  }
+  100% { 
+    box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; 
+  }
+}
+
+@keyframes matrix {
+  0% { 
+    transform: translateY(-100%); 
+  }
+  100% { 
+    transform: translateY(100vh); 
+  }
+}
+
+@keyframes scan {
+  0% { 
+    transform: translateX(-100%); 
+  }
+  100% { 
+    transform: translateX(100vw); 
+  }
+}
+
+@keyframes pulse-neon {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animate-matrix {
+  animation: matrix 20s linear infinite;
+}
+
+.animate-scan {
+  animation: scan 8s linear infinite;
+}
+
+.animate-pulse-neon {
+  animation: pulse-neon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

@@ -1,0 +1,54 @@
+@echo off
+echo 🤖 Starting JarvisOS System...
+echo ================================
+
+REM Check if Node.js is installed
+node --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ❌ Node.js is not installed. Please install Node.js first.
+    pause
+    exit /b 1
+)
+
+REM Check if Python is installed
+python --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ❌ Python is not installed. Please install Python first.
+    pause
+    exit /b 1
+)
+
+echo ✅ Node.js detected
+echo ✅ Python detected
+
+REM Start backend server
+echo 🚀 Starting Backend Server...
+cd backend
+python -m pip install -r requirements.txt >nul 2>&1
+start /b python main.py
+cd ..
+
+REM Wait for backend to start
+timeout /t 3 /nobreak >nul
+
+REM Install frontend dependencies if needed
+if not exist "node_modules" (
+    echo 📦 Installing frontend dependencies...
+    npm install
+)
+
+REM Start frontend
+echo 🚀 Starting Frontend...
+start /b npm run dev
+
+echo ✅ JarvisOS is running!
+echo Frontend: http://localhost:3000
+echo Backend: http://localhost:8000
+echo.
+echo Press any key to stop all services...
+pause >nul
+
+REM Cleanup
+taskkill /f /im python.exe >nul 2>&1
+taskkill /f /im node.exe >nul 2>&1
+echo ✅ All services stopped
