@@ -162,7 +162,7 @@ const SystemMonitor = ({ sendMessage }) => {
         {/* System Info */}
         <div className="mt-4 p-3 bg-black/30 rounded border border-neon-cyan/30">
           <div className="text-xs space-y-1 font-mono">
-            <div className="flex justify-between">
+            <div className="flex jussstsify-between">
               <span className="text-gray-400">Uptime:</span>
               <span className="text-neon-green">
                 {state.systemStats?.timestamp ? 

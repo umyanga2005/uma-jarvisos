@@ -2,13 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import CustomDraggable from './CustomDraggable';
 
-const DraggableWidget = ({ 
-  children, 
-  id, 
-  position, 
-  size, 
-  devMode, 
-  onPositionChange 
+const DraggableWidget = ({
+  children,
+  id,
+  position,
+  size, // Pass size prop
+  devMode,
+  onPositionChange,
+  onSizeChange // New prop for size change callback
 }) => {
   const handleDrag = (e, data) => {
     if (devMode && onPositionChange) {
@@ -16,10 +17,18 @@ const DraggableWidget = ({
     }
   };
 
+  const handleResize = (e, newSize) => { // New handler for resizing
+    if (devMode && onSizeChange) {
+      onSizeChange(id, newSize);
+    }
+  };
+
   return (
     <CustomDraggable
       position={position}
+      size={size} // Pass size to CustomDraggable
       onDrag={handleDrag}
+      onResize={handleResize} // Pass onResize to CustomDraggable
       disabled={!devMode}
       bounds="parent"
     >
@@ -28,8 +37,8 @@ const DraggableWidget = ({
           devMode ? 'dev-mode-active' : ''
         }`}
         style={{
-          width: size.width,
-          height: size.height,
+          width: size.width, // Use size from props
+          height: size.height, // Use size from props
         }}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}

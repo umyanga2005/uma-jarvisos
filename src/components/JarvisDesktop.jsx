@@ -10,12 +10,29 @@ import SystemMonitor from './SystemMonitor';
 import Launcher from './Launcher';
 import NetworkPanel from './NetworkPanel';
 import NotificationPanel from './NotificationPanel';
+import { LogOut } from 'lucide-react'; // Import LogOut icon
+import TimeDateWidget from './TimeDateWidget';
+import SystemLogsWidget from './SystemLogsWidget';
 
-const JarvisDesktop = () => {
+const JarvisDesktop = ({ onLogout }) => { // Accept onLogout prop
   const { state, dispatch } = useApp();
   const { lastMessage, sendMessage, readyState } = useWebSocket('ws://localhost:8000/ws');
 
   const [widgets, setWidgets] = useState([
+  {
+    id: 'time-date',
+    component: TimeDateWidget,
+    position: { x: 1200, y: 50 },
+    size: { width: 250, height: 120 },
+    visible: true,
+  },
+  {
+    id: 'system-logs',
+    component: SystemLogsWidget,
+    position: { x: 700, y: 400 },
+    size: { width: 600, height: 200 },
+    visible: true,
+  },
     {
       id: 'terminal',
       component: Terminal,
@@ -72,8 +89,58 @@ const JarvisDesktop = () => {
           });
           break;
         case 'command_response':
-          // Handle command responses
-          console.log('Command response:', lastMessage.data);
+          // Handle command responses for terminal
+          dispatch({
+            type: 'ADD_TERMINAL_OUTPUT', // New action type for terminal
+            payload: {
+              type: 'output',
+              content: `> ${lastMessage.data.command}: ${lastMessage.data.result}`
+            }
+          });
+          break;
+        case 'terminal_output': // New message type for backend terminal output
+          dispatch({
+            type: 'ADD_TERMINAL_OUTPUT',
+            payload: {
+              type: 'output',
+              content: lastMessage.data.output
+            }
+          });
+          break;
+        case 'terminal_error': // New message type for backend terminal error
+          dispatch({
+            type: 'ADD_TERMINAL_OUTPUT',
+            payload: {
+              type: 'error',
+              content: lastMessage.data.error
+            }
+          });
+          break;
+        case 'process_list':
+          dispatch({
+            type: 'ADD_NOTIFICATION',
+            payload: {
+              id: Date.now(),
+              type: 'info',
+              title: 'Process List',
+              message: `Received ${lastMessage.data.length} processes. Check console.`,
+              timestamp: Date.now(),
+            },
+          });
+          console.log('Received Process List:', lastMessage.data);
+          break;
+        case 'network_connections':
+          dispatch({
+            type: 'ADD_NOTIFICATION',
+            payload: {
+              id: Date.now(),
+              type: 'info',
+              title: 'Network Connections',
+              message: `Received ${lastMessage.data.length} network connections. Check console.`,
+              timestamp: Date.now(),
+            },
+          });
+          console.log('Received Network Connections:', lastMessage.data);
           break;
         default:
           console.log('Unknown message type:', lastMessage.type);
@@ -82,8 +149,14 @@ const JarvisDesktop = () => {
   }, [lastMessage, dispatch]);
 
   const updateWidgetPosition = (id, position) => {
-    setWidgets(prev => prev.map(widget => 
+    setWidgets(prev => prev.map(widget =>
       widget.id === id ? { ...widget, position } : widget
+    ));
+  };
+
+  const updateWidgetSize = (id, size) => { // New function for resizing
+    setWidgets(prev => prev.map(widget =>
+      widget.id === id ? { ...widget, size } : widget
     ));
   };
 
@@ -91,7 +164,7 @@ const JarvisDesktop = () => {
     <div className="w-screen h-screen bg-dark-bg relative overflow-hidden">
       {/* Animated Background Grid */}
       <div className="absolute inset-0 opacity-10">
-        <motion.div 
+        <motion.div
           className="w-full h-full"
           animate={{
             backgroundPosition: ['0px 0px', '50px 50px'],
@@ -108,7 +181,7 @@ const JarvisDesktop = () => {
               linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px)
             `,
             backgroundSize: '50px 50px'
-          }} 
+          }}
         />
       </div>
 
@@ -127,6 +200,16 @@ const JarvisDesktop = () => {
       {/* Dev Mode Toggle */}
       <DevModeToggle />
 
+      {/* Logout Button */}
+      <motion.button
+        onClick={onLogout}
+        className="absolute top-4 right-20 p-3 rounded-lg glass-panel neon-border text-red-400 hover:bg-red-400/20 transition-all duration-300 z-50"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <LogOut size={20} />
+      </motion.button>
+
       {/* Central Jarvis Face */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         <HoloFace sendMessage={sendMessage} />
@@ -142,6 +225,7 @@ const JarvisDesktop = () => {
             size={widget.size}
             devMode={state.devMode}
             onPositionChange={updateWidgetPosition}
+            onSizeChange={updateWidgetSize} // Pass new prop
           >
             <widget.component sendMessage={sendMessage} />
           </DraggableWidget>
@@ -152,7 +236,7 @@ const JarvisDesktop = () => {
       <NotificationPanel />
 
       {/* Ambient Glow Effects */}
-      <motion.div 
+      <motion.div
         className="absolute top-10 left-10 w-32 h-32 bg-neon-cyan rounded-full opacity-20 blur-3xl"
         animate={{
           scale: [1, 1.2, 1],
@@ -164,7 +248,7 @@ const JarvisDesktop = () => {
           ease: 'easeInOut'
         }}
       />
-      <motion.div 
+      <motion.div
         className="absolute bottom-10 right-10 w-40 h-40 bg-neon-blue rounded-full opacity-15 blur-3xl"
         animate={{
           scale: [1.2, 1, 1.2],

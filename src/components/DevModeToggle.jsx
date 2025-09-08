@@ -101,7 +101,7 @@ const DevModeToggle = () => {
           >
             <div className="flex items-center gap-2 mb-3">
               <Settings size={16} className="text-neon-cyan" />
-              <span className="text-sm font-mono text-neon-cyan">DEVELOPER ACCESS</span>
+              <span className="text-sm font-mono">DEVELOPER ACCESS</span>
             </div>
             
             <form onSubmit={handlePasswordSubmit}>

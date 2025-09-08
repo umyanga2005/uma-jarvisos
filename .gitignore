@@ -26,3 +26,6 @@ dist-ssr
 secretes
 .env
 update_github.sh
+backend/__pycache__
+vosk-model-en-us-0.22
+backend/__pycache__/main.cpython-313.pyc
